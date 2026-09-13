@@ -2,64 +2,154 @@
 <html lang="en">
 <head>
   <meta charset="utf-8" />
-  <meta name="viewport" content="width=device-width,initial-scale=1" />
-  <title>ESOG OSRS Loadout Builder</title>
+  <meta name="viewport" content="width=device-width,initial-scale=1,viewport-fit=cover" />
+  <meta name="theme-color" content="#0b0f0d" />
+  <title>ESOG Companion</title>
   <link rel="stylesheet" href="styles.css" />
 </head>
 <body>
-  <main class="wrap">
-    <header class="hero">
-      <div>
-        <div class="eyebrow">Veterans of the Grind</div>
-        <h1>OSRS Loadout Builder</h1>
-        <p>Enter a RuneScape name, select what you are doing, and get a requirements-aware gear, inventory, and preparation plan.</p>
+  <div class="app-shell">
+    <header class="topbar">
+      <div class="brand">
+        <div class="brand-mark">E</div>
+        <div>
+          <div class="brand-title">ESOG Companion</div>
+          <div class="brand-sub">Veterans of the Grind</div>
+        </div>
+      </div>
+      <div class="status-cluster">
+        <span id="marketStatus" class="live-dot"><i></i> Market</span>
+        <span id="trackerStatus" class="status-chip">Tracker offline</span>
       </div>
     </header>
 
-    <section class="panel controls">
-      <label>RuneScape name
-        <div class="row">
-          <input id="username" autocomplete="off" placeholder="CameToSayDie" />
-          <button id="lookupBtn">Pull stats</button>
+    <nav class="tabbar" aria-label="Primary">
+      <button class="tab active" data-tab="home">Home</button>
+      <button class="tab" data-tab="market">GE Market</button>
+      <button class="tab" data-tab="tracker">Live Tracker</button>
+      <button class="tab" data-tab="loadouts">Loadouts</button>
+      <button class="tab" data-tab="player">Player</button>
+    </nav>
+
+    <main>
+      <section id="tab-home" class="tab-page active">
+        <div class="hero-grid">
+          <article class="hero-card">
+            <div class="eyebrow">OSRS COMMUNITY COMPANION</div>
+            <h1>One screen for your account, market, sessions and builds.</h1>
+            <p>Track what you are earning, watch the Grand Exchange like a market terminal, and build account-compatible gear without digging through six different sites.</p>
+            <div class="hero-actions">
+              <button class="primary jump" data-target="market">Open GE Market</button>
+              <button class="secondary jump" data-target="tracker">Open Live Tracker</button>
+            </div>
+          </article>
+          <article class="metric-board">
+            <div class="mini-label">SESSION SNAPSHOT</div>
+            <div class="metric-row"><span>XP / hr</span><strong id="homeXpHr">—</strong></div>
+            <div class="metric-row"><span>Profit / hr</span><strong id="homeGpHr">—</strong></div>
+            <div class="metric-row"><span>Loot</span><strong id="homeLoot">—</strong></div>
+            <div class="metric-row"><span>Session</span><strong id="homeSession">—</strong></div>
+          </article>
         </div>
-      </label>
-      <div id="lookupStatus" class="status"></div>
 
-      <div class="grid3">
-        <label>Mode
-          <select id="mode">
-            <option value="anti-pk">Revenants / Anti-PK</option>
-            <option value="pk">PKing</option>
-            <option value="pvm">PvM / Bossing</option>
-          </select>
-        </label>
-        <label>Target
-          <select id="target"></select>
-        </label>
-        <label>Budget / risk style
-          <select id="risk">
-            <option value="low">Low risk</option>
-            <option value="balanced" selected>Balanced</option>
-            <option value="max">Maximum performance</option>
-          </select>
-        </label>
-      </div>
+        <div class="section-title"><div><span>Quick access</span><h2>Everything in one app</h2></div></div>
+        <div class="feature-grid">
+          <button class="feature-card jump" data-target="market"><span class="feature-icon">↗</span><b>GE Market</b><small>Live prices, 5m/1h changes, volume, watchlist and charts.</small></button>
+          <button class="feature-card jump" data-target="tracker"><span class="feature-icon">●</span><b>Live Tracker</b><small>XP/hr, loot, supplies, profit/hr and session history from RuneLite.</small></button>
+          <button class="feature-card jump" data-target="loadouts"><span class="feature-icon">⚔</span><b>Loadouts</b><small>Requirements-aware PvM, Wilderness and PK setups.</small></button>
+          <button class="feature-card jump" data-target="player"><span class="feature-icon">⌁</span><b>Player</b><small>Pull account stats and use them across the rest of the app.</small></button>
+        </div>
+      </section>
 
-      <details>
-        <summary>Manual stats / correction</summary>
-        <div id="manualStats" class="stats-grid"></div>
-      </details>
+      <section id="tab-market" class="tab-page">
+        <div class="market-head">
+          <div><div class="eyebrow">GRAND EXCHANGE</div><h1>Market</h1><p class="muted">Exchange-style market view. Information only — no in-game trades are placed here.</p></div>
+          <div class="market-controls">
+            <input id="marketSearch" type="search" placeholder="Search item…" autocomplete="off" />
+            <select id="marketSort">
+              <option value="volume">Most traded</option>
+              <option value="gain">Top gainers</option>
+              <option value="loss">Top losers</option>
+              <option value="price">Highest price</option>
+            </select>
+          </div>
+        </div>
 
-      <button id="buildBtn" class="primary">Build loadout</button>
-    </section>
+        <div class="market-kpis">
+          <div class="kpi"><small>Tracked items</small><strong id="trackedItems">—</strong><span>OSRS market</span></div>
+          <div class="kpi"><small>5m leaders</small><strong id="leaderCount">—</strong><span>with recent volume</span></div>
+          <div class="kpi"><small>Last refresh</small><strong id="marketRefresh">—</strong><span>automatic</span></div>
+        </div>
 
-    <section id="playerCard" class="panel hidden"></section>
-    <section id="results" class="hidden"></section>
+        <div class="market-layout">
+          <article class="panel market-table-card">
+            <div class="panel-head"><div><small>MARKET</small><h3>Items</h3></div><button id="refreshMarket" class="ghost">Refresh</button></div>
+            <div class="table-wrap">
+              <table class="market-table">
+                <thead><tr><th>Item</th><th>Price</th><th>5m</th><th>1h</th><th>5m volume</th><th></th></tr></thead>
+                <tbody id="marketRows"><tr><td colspan="6" class="empty">Loading market data…</td></tr></tbody>
+              </table>
+            </div>
+          </article>
 
-    <footer>
-      <p>Community build planner. Always verify death-risk values in-game before entering the Wilderness.</p>
-    </footer>
-  </main>
+          <aside class="panel item-detail" id="itemDetail">
+            <div class="empty-detail"><div class="detail-orb">GE</div><h3>Select an item</h3><p>Tap any market row to open its price dashboard.</p></div>
+          </aside>
+        </div>
+
+        <article class="panel watchlist-card">
+          <div class="panel-head"><div><small>YOUR LIST</small><h3>Watchlist</h3></div></div>
+          <div id="watchlist" class="watchlist"><div class="empty">Star items from the market to pin them here.</div></div>
+        </article>
+      </section>
+
+      <section id="tab-tracker" class="tab-page">
+        <div class="section-title"><div><span>RUNE LITE TELEMETRY</span><h1>Live Tracker</h1></div></div>
+        <div class="tracker-grid">
+          <article class="panel tracker-connect">
+            <small>CONNECTION</small><h3>RuneLite companion</h3>
+            <p class="muted">The plugin sends read-only session telemetry to your companion server. Your game inputs are never automated.</p>
+            <label>Companion server
+              <div class="input-row"><input id="trackerEndpoint" value="http://127.0.0.1:8765" /><button id="saveTrackerEndpoint">Connect</button></div>
+            </label>
+            <div id="trackerConnectionMessage" class="connection-message">Not connected.</div>
+          </article>
+          <article class="metric-card"><small>XP / HOUR</small><strong id="trackerXpHr">—</strong><span id="trackerXpGain">XP gained —</span></article>
+          <article class="metric-card"><small>PROFIT / HOUR</small><strong id="trackerGpHr">—</strong><span id="trackerProfit">Net —</span></article>
+          <article class="metric-card"><small>LOOT VALUE</small><strong id="trackerLoot">—</strong><span id="trackerSupplies">Supplies —</span></article>
+        </div>
+        <div class="two-col">
+          <article class="panel"><div class="panel-head"><div><small>SESSION</small><h3>Current run</h3></div></div><div id="sessionDetails" class="detail-list"><div class="empty">Connect the RuneLite tracker to begin.</div></div></article>
+          <article class="panel"><div class="panel-head"><div><small>DROPS</small><h3>Recent loot</h3></div></div><div id="recentLoot" class="loot-list"><div class="empty">No live drops yet.</div></div></article>
+        </div>
+      </section>
+
+      <section id="tab-loadouts" class="tab-page">
+        <div class="section-title"><div><span>REQUIREMENTS-AWARE</span><h1>Loadout Builder</h1></div></div>
+        <section class="panel controls">
+          <div class="grid3">
+            <label>Mode<select id="mode"><option value="anti-pk">Revenants / Anti-PK</option><option value="pk">PKing</option><option value="pvm">PvM / Bossing</option></select></label>
+            <label>Target<select id="target"></select></label>
+            <label>Budget / risk<select id="risk"><option value="low">Low risk</option><option value="balanced" selected>Balanced</option><option value="max">Maximum performance</option></select></label>
+          </div>
+          <details><summary>Manual stats / correction</summary><div id="manualStats" class="stats-grid"></div></details>
+          <button id="buildBtn" class="primary full">Build loadout</button>
+        </section>
+        <section id="results" class="hidden"></section>
+      </section>
+
+      <section id="tab-player" class="tab-page">
+        <div class="section-title"><div><span>ACCOUNT</span><h1>Player Profile</h1></div></div>
+        <article class="panel player-search">
+          <label>RuneScape name<div class="input-row"><input id="username" autocomplete="off" placeholder="CameToSayDie" /><button id="lookupBtn">Pull stats</button></div></label>
+          <div id="lookupStatus" class="connection-message"></div>
+        </article>
+        <section id="playerCard" class="panel hidden"></section>
+      </section>
+    </main>
+
+    <footer>ESOG community companion • Market data is informational • Always verify Wilderness risk in-game.</footer>
+  </div>
   <script src="app.js"></script>
 </body>
 </html>
