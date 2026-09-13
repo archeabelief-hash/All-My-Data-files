@@ -1,0 +1,51 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <title>ESOG Live Tracker</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="wrap">
+    <header>
+      <div>
+        <h1>ESOG Live Tracker</h1>
+        <p>Veterans of the Grind</p>
+      </div>
+      <div id="status" class="pill">Connecting…</div>
+    </header>
+
+    <section class="toolbar card">
+      <label>Character
+        <select id="playerSelect"></select>
+      </label>
+      <button id="refreshBtn">Refresh</button>
+    </section>
+
+    <section class="grid">
+      <article class="card metric"><span>Session</span><strong id="elapsed">--</strong></article>
+      <article class="card metric"><span>Gross loot</span><strong id="loot">--</strong></article>
+      <article class="card metric"><span>Estimated supplies</span><strong id="supplies">--</strong></article>
+      <article class="card metric"><span>Net profit</span><strong id="net">--</strong></article>
+      <article class="card metric"><span>Profit / hour</span><strong id="gph">--</strong></article>
+      <article class="card metric"><span>NPC loot events</span><strong id="kills">--</strong></article>
+    </section>
+
+    <section class="card">
+      <h2>XP this session</h2>
+      <div id="xpTable" class="table"></div>
+    </section>
+
+    <section class="card">
+      <h2>Latest event</h2>
+      <pre id="latest">Waiting for RuneLite telemetry…</pre>
+    </section>
+
+    <footer>
+      Read-only analytics. No gameplay automation or input control.
+    </footer>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
