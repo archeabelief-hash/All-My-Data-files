@@ -25,7 +25,7 @@ public interface EsogLiveTrackerConfig extends Config
     )
     default boolean sendTelemetry()
     {
-        return true;
+        return false;
     }
 
     @ConfigItem(
