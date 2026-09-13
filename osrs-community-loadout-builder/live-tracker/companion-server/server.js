@@ -4,7 +4,8 @@ const path = require('path');
 
 const PORT = Number(process.env.PORT || 8765);
 const HOST = process.env.HOST || '0.0.0.0';
-const publicDir = path.join(__dirname, 'public');
+// Serve the unified ESOG Companion UI two directories above this server.
+const publicDir = path.resolve(__dirname, '..', '..');
 
 const sessions = new Map();
 const history = [];
@@ -97,6 +98,7 @@ const server = http.createServer(async (req, res) => {
     const type = ext === '.html' ? 'text/html; charset=utf-8'
       : ext === '.js' ? 'application/javascript; charset=utf-8'
       : ext === '.css' ? 'text/css; charset=utf-8'
+      : ext === '.json' ? 'application/json; charset=utf-8'
       : 'application/octet-stream';
     res.writeHead(200, { 'Content-Type': type, 'Cache-Control': 'no-store' });
     res.end(data);
@@ -104,6 +106,7 @@ const server = http.createServer(async (req, res) => {
 });
 
 server.listen(PORT, HOST, () => {
-  console.log(`ESOG Live Tracker: http://127.0.0.1:${PORT}`);
+  console.log(`ESOG Companion: http://127.0.0.1:${PORT}`);
   console.log(`Phone: open http://<YOUR-PC-LAN-IP>:${PORT} on the same Wi-Fi`);
+  console.log('This server receives read-only RuneLite telemetry and serves the unified mobile dashboard.');
 });
