@@ -1,0 +1,65 @@
+<!doctype html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>ESOG OSRS Loadout Builder</title>
+  <link rel="stylesheet" href="styles.css" />
+</head>
+<body>
+  <main class="wrap">
+    <header class="hero">
+      <div>
+        <div class="eyebrow">Veterans of the Grind</div>
+        <h1>OSRS Loadout Builder</h1>
+        <p>Enter a RuneScape name, select what you are doing, and get a requirements-aware gear, inventory, and preparation plan.</p>
+      </div>
+    </header>
+
+    <section class="panel controls">
+      <label>RuneScape name
+        <div class="row">
+          <input id="username" autocomplete="off" placeholder="CameToSayDie" />
+          <button id="lookupBtn">Pull stats</button>
+        </div>
+      </label>
+      <div id="lookupStatus" class="status"></div>
+
+      <div class="grid3">
+        <label>Mode
+          <select id="mode">
+            <option value="anti-pk">Revenants / Anti-PK</option>
+            <option value="pk">PKing</option>
+            <option value="pvm">PvM / Bossing</option>
+          </select>
+        </label>
+        <label>Target
+          <select id="target"></select>
+        </label>
+        <label>Budget / risk style
+          <select id="risk">
+            <option value="low">Low risk</option>
+            <option value="balanced" selected>Balanced</option>
+            <option value="max">Maximum performance</option>
+          </select>
+        </label>
+      </div>
+
+      <details>
+        <summary>Manual stats / correction</summary>
+        <div id="manualStats" class="stats-grid"></div>
+      </details>
+
+      <button id="buildBtn" class="primary">Build loadout</button>
+    </section>
+
+    <section id="playerCard" class="panel hidden"></section>
+    <section id="results" class="hidden"></section>
+
+    <footer>
+      <p>Community build planner. Always verify death-risk values in-game before entering the Wilderness.</p>
+    </footer>
+  </main>
+  <script src="app.js"></script>
+</body>
+</html>
