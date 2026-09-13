@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <color name="esog_background">#090D0B</color>
+    <color name="esog_status">#0B100D</color>
+    <color name="esog_gold">#D7B35A</color>
+</resources>
