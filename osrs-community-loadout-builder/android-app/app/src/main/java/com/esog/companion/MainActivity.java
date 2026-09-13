@@ -1,13 +1,11 @@
 package com.esog.companion;
 
 import android.app.Activity;
-import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.net.Uri;
 import android.os.Bundle;
 import android.view.Gravity;
-import android.view.View;
 import android.view.ViewGroup;
 import android.webkit.WebChromeClient;
 import android.webkit.WebSettings;
@@ -29,13 +27,14 @@ public class MainActivity extends Activity {
 
     private SharedPreferences prefs;
     private WebView webView;
-    private LinearLayout root;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         prefs = getSharedPreferences(PREFS, MODE_PRIVATE);
-        showLauncher();
+        String saved = prefs.getString(KEY_SERVER, "");
+        if (saved != null && !saved.isEmpty()) showWeb(saved);
+        else showLauncher();
     }
 
     private TextView text(String value, float sp, int color) {
@@ -51,7 +50,8 @@ public class MainActivity extends Activity {
     }
 
     private void showLauncher() {
-        root = new LinearLayout(this);
+        webView = null;
+        LinearLayout root = new LinearLayout(this);
         root.setOrientation(LinearLayout.VERTICAL);
         root.setPadding(dp(22), dp(28), dp(22), dp(22));
         root.setBackgroundColor(BG);
@@ -72,7 +72,7 @@ public class MainActivity extends Activity {
 
         EditText server = new EditText(this);
         server.setSingleLine(true);
-        server.setText(prefs.getString(KEY_SERVER, "http://192.168.1.2:8765"));
+        server.setText(prefs.getString(KEY_SERVER, ""));
         server.setHint("http://YOUR-PC-IP:8765");
         server.setTextColor(TEXT);
         server.setHintTextColor(MUTED);
@@ -88,14 +88,14 @@ public class MainActivity extends Activity {
         buttonParams.topMargin = dp(12);
         root.addView(connect, buttonParams);
 
-        TextView hint = text("Tip: your PC will show its local dashboard address when the ESOG companion server starts.", 12, MUTED);
+        TextView hint = text("When the PC companion server starts it prints the exact phone address. Enter that address here once; the app remembers it.", 12, MUTED);
         hint.setPadding(0, dp(18), 0, 0);
         root.addView(hint, new LinearLayout.LayoutParams(ViewGroup.LayoutParams.MATCH_PARENT, ViewGroup.LayoutParams.WRAP_CONTENT));
 
         connect.setOnClickListener(v -> {
             String url = normalizeUrl(server.getText().toString());
             if (url == null) {
-                server.setError("Enter a valid http:// or https:// address");
+                server.setError("Enter the PC address shown by the ESOG companion server");
                 return;
             }
             prefs.edit().putString(KEY_SERVER, url).apply();
@@ -165,6 +165,19 @@ public class MainActivity extends Activity {
         ws.setDisplayZoomControls(false);
         webView.setWebChromeClient(new WebChromeClient());
         webView.setWebViewClient(new WebViewClient() {
+            @Override
+            public void onPageFinished(WebView view, String pageUrl) {
+                super.onPageFinished(view, pageUrl);
+                // The dashboard is being served by the same PC that receives RuneLite telemetry.
+                // Point the Tracker tab at that same origin automatically so the phone never tries localhost.
+                String js = "(function(){try{" +
+                        "localStorage.setItem('esog-tracker-endpoint', location.origin);" +
+                        "var i=document.getElementById('trackerEndpoint');if(i){i.value=location.origin;}" +
+                        "var b=document.getElementById('saveTrackerEndpoint');if(b){b.click();}" +
+                        "}catch(e){}})();";
+                view.evaluateJavascript(js, null);
+            }
+
             @Override
             public void onReceivedError(WebView view, int errorCode, String description, String failingUrl) {
                 if (failingUrl != null && failingUrl.equals(url)) showConnectionError(url, description);
