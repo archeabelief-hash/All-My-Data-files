@@ -28,6 +28,7 @@ Initial HUD states:
 - `backend/app.py` — local prototype API and fusion engine
 - `pipeline/audio.py` — microphone capture, faster-whisper STT, response timing, language features
 - `pipeline/video.py` — OpenCV camera capture, face presence/boxes, frame motion energy
+- `pipeline/baseline.py` — per-subject numeric feature baselines, persistence, deviation scores
 - `requirements-audio.txt` — optional local audio dependencies
 - `requirements-video.txt` — optional OpenCV camera dependencies
 - `web/index.html` — simulated glasses HUD
@@ -58,6 +59,9 @@ pip install -r requirements-audio.txt
 pip install -r requirements-video.txt
 ```
 The video pipeline emits observable camera measurements only. It does not perform emotion recognition, face identity, deception inference, or mental-state classification.
+
+### Baselines
+`BaselineStore` learns numeric observable-feature distributions per opaque subject/session ID. By default a feature needs 5 prior samples before a deviation z-score is emitted. Baseline deviation is statistical distance only; it is not an emotion, deception, intent, identity, or diagnosis label.
 
 ### Tests
 ```bash
