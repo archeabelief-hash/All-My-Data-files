@@ -12,13 +12,10 @@ The system never claims to read minds or prove deception. It separates:
 ## MVP
 Phone/PC camera + microphone -> timestamped observations -> personal baseline -> multimodal fusion -> simulated AR HUD.
 
-Initial HUD states:
+Current HUD states:
 - NORMAL
+- SIGNALS CHANGED
 - BASELINE SHIFT
-- STATEMENT CONFLICT
-- QUESTION AVOIDANCE
-- PRESSURE / PERSUASION PATTERN
-- UNVERIFIABLE
 - INSUFFICIENT EVIDENCE
 
 ## Repository layout
