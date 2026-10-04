@@ -36,7 +36,7 @@ Current HUD states:
 Requires Python 3.10+.
 
 ```bash
-cd projects/behavioral-ar
+cd ./projects/behavioral-ar
 python -m venv .venv
 # Windows:
 .venv\Scripts\activate
