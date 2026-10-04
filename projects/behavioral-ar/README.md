@@ -27,7 +27,9 @@ Initial HUD states:
 - `schemas/event.schema.json` — common observation/inference event format
 - `backend/app.py` — local prototype API and fusion engine
 - `pipeline/audio.py` — microphone capture, faster-whisper STT, response timing, language features
+- `pipeline/video.py` — OpenCV camera capture, face presence/boxes, frame motion energy
 - `requirements-audio.txt` — optional local audio dependencies
+- `requirements-video.txt` — optional OpenCV camera dependencies
 - `web/index.html` — simulated glasses HUD
 - `requirements.txt` — Python dependencies
 
@@ -50,6 +52,12 @@ Open `http://127.0.0.1:8000`.
 pip install -r requirements-audio.txt
 ```
 `faster-whisper` downloads the selected model on first use. The default is `small.en`. Audio capture and model imports are lazy, so the core API can run without these optional packages.
+
+### Enable local video
+```bash
+pip install -r requirements-video.txt
+```
+The video pipeline emits observable camera measurements only. It does not perform emotion recognition, face identity, deception inference, or mental-state classification.
 
 ### Tests
 ```bash
