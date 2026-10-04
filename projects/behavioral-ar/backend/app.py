@@ -7,10 +7,10 @@ from uuid import uuid4
 
 from fastapi import FastAPI
 from fastapi.responses import FileResponse
-from pydantic import BaseModel, Field
+from pydantic import BaseModel, Field, field_validator
 
 ROOT = Path(__file__).resolve().parents[1]
-app = FastAPI(title="Behavioral AR Prototype", version="0.1.0")
+app = FastAPI(title="Behavioral AR Prototype", version="0.2.0")
 
 class Signal(BaseModel):
     channel: Literal["visual", "vocal", "language", "motion", "context"]
@@ -18,6 +18,15 @@ class Signal(BaseModel):
     deviation: float = Field(ge=0, le=10)
     confidence: float = Field(ge=0, le=1)
     quality: float = Field(default=1, ge=0, le=1)
+
+    @field_validator("channel", mode="before")
+    @classmethod
+    def normalize_channel(cls, value):
+        # Sensor adapters may use a source-specific channel name. Keep the
+        # fusion vocabulary stable by normalizing at the API boundary.
+        if isinstance(value, str) and value.lower() == "face":
+            return "visual"
+        return value
 
 class FusionRequest(BaseModel):
     signals: list[Signal]
@@ -28,7 +37,7 @@ def hud():
 
 @app.get("/health")
 def health():
-    return {"ok": True, "service": "behavioral-ar", "version": "0.1.0"}
+    return {"ok": True, "service": "behavioral-ar", "version": "0.2.0"}
 
 @app.post("/api/fuse")
 def fuse(req: FusionRequest):
@@ -36,7 +45,6 @@ def fuse(req: FusionRequest):
     if not usable:
         return result("INSUFFICIENT EVIDENCE", 0.0, [])
 
-    # Conservative MVP score. Production must be empirically calibrated.
     weighted = [min(s.deviation / 4.0, 1.0) * s.confidence * s.quality for s in usable]
     channels = {s.channel for s in usable}
     convergence = min(len(channels) / 3.0, 1.0)

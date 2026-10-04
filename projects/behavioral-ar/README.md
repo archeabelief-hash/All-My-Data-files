@@ -26,6 +26,8 @@ Initial HUD states:
 - `docs/RESEARCH_PROTOCOL.md` — measurement and validation rules
 - `schemas/event.schema.json` — common observation/inference event format
 - `backend/app.py` — local prototype API and fusion engine
+- `pipeline/audio.py` — microphone capture, faster-whisper STT, response timing, language features
+- `requirements-audio.txt` — optional local audio dependencies
 - `web/index.html` — simulated glasses HUD
 - `requirements.txt` — Python dependencies
 
@@ -42,6 +44,17 @@ uvicorn backend.app:app --reload --host 0.0.0.0 --port 8000
 ```
 
 Open `http://127.0.0.1:8000`.
+
+### Enable local audio
+```bash
+pip install -r requirements-audio.txt
+```
+`faster-whisper` downloads the selected model on first use. The default is `small.en`. Audio capture and model imports are lazy, so the core API can run without these optional packages.
+
+### Tests
+```bash
+pytest -q
+```
 
 ## Next milestones
 1. Android sensor client (camera/mic with explicit consent)
