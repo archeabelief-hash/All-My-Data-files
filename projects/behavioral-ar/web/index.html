@@ -1,0 +1,42 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>Behavioral AR HUD</title>
+<style>
+body{margin:0;background:#090d12;color:#e8f0f7;font:16px system-ui;display:grid;place-items:center;min-height:100vh}
+main{width:min(900px,92vw)} .hud{border:1px solid #506070;border-radius:20px;padding:28px;background:#0d141ccc}
+.kicker{opacity:.65;letter-spacing:.15em}.status{font-size:clamp(2rem,7vw,5rem);font-weight:800;margin:.15em 0}
+.meter{height:10px;background:#1e2935;border-radius:8px;overflow:hidden}.meter>i{display:block;height:100%;width:0;background:#b7c7d8}
+.grid{display:grid;grid-template-columns:repeat(auto-fit,minmax(130px,1fr));gap:10px;margin-top:18px}
+button{background:#16212d;color:#fff;border:1px solid #526274;border-radius:10px;padding:12px;cursor:pointer}
+small{display:block;opacity:.65;margin-top:18px;line-height:1.4}
+</style>
+</head>
+<body><main><section class="hud">
+<div class="kicker">SIMULATED AR • RESEARCH MODE</div>
+<div id="status" class="status">NORMAL</div>
+<div id="score">Confidence 0%</div><div class="meter"><i id="bar"></i></div>
+<div class="grid">
+<button data-d=".2">Normal sample</button>
+<button data-d="2.2">Mild shift</button>
+<button data-d="3.8">Multi-channel shift</button>
+</div>
+<small>Observation ≠ inference. Inference ≠ proof. This HUD reports measured deviations and evidence states, not mind-reading or definitive lie detection.</small>
+</section></main>
+<script>
+const status=document.querySelector('#status'),score=document.querySelector('#score'),bar=document.querySelector('#bar');
+document.querySelectorAll('button').forEach((b,i)=>b.addEventListener('click',async()=>{
+ const d=Number(b.dataset.d);
+ const signals=i===2?[
+  {channel:'vocal',kind:'prosody_delta',deviation:d,confidence:.82,quality:.9},
+  {channel:'language',kind:'response_structure_delta',deviation:d,confidence:.76,quality:.95},
+  {channel:'visual',kind:'posture_delta',deviation:d,confidence:.67,quality:.8}
+ ]:[{channel:'vocal',kind:'prosody_delta',deviation:d,confidence:.75,quality:.9}];
+ try{
+  const r=await fetch('/api/fuse',{method:'POST',headers:{'content-type':'application/json'},body:JSON.stringify({signals})});
+  const x=await r.json(),p=Math.round(x.confidence*100);
+  status.textContent=x.label; score.textContent='Confidence '+p+'%'; bar.style.width=p+'%';
+ }catch(e){status.textContent='API OFFLINE';score.textContent='Start the local server first';bar.style.width='0%'}
+}));
+</script></body></html>
