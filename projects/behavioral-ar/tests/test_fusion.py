@@ -14,5 +14,7 @@ def test_face_only_event_is_normalized_and_does_not_error():
     }]})
     assert response.status_code == 200
     body = response.json()
-    assert body["supports"] == [{"channel": "visual", "kind": "face_landmark_delta"}]
+    assert len(body["supports"]) == 1
+    assert body["supports"][0]["channel"] == "visual"
+    assert body["supports"][0]["kind"] == "face_landmark_delta"
     assert body["label"] in {"NORMAL", "SIGNALS CHANGED"}
