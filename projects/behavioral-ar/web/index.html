@@ -39,4 +39,13 @@ document.querySelectorAll('button').forEach((b,i)=>b.addEventListener('click',as
   status.textContent=x.label; score.textContent='Confidence '+p+'%'; bar.style.width=p+'%';
  }catch(e){status.textContent='API OFFLINE';score.textContent='Start the local server first';bar.style.width='0%'}
 }));
+
+const stream=new EventSource('/api/hud/stream');
+stream.addEventListener('hud',ev=>{
+ const x=JSON.parse(ev.data),p=Math.round((x.confidence||0)*100);
+ status.textContent=x.label||'NORMAL';
+ score.textContent='Confidence '+p+'%';
+ bar.style.width=p+'%';
+});
+stream.onerror=()=>{ score.textContent='HUD stream reconnecting…'; };
 </script></body></html>
