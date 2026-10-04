@@ -29,6 +29,7 @@ Initial HUD states:
 - `pipeline/audio.py` — microphone capture, faster-whisper STT, response timing, language features
 - `pipeline/video.py` — OpenCV camera capture, face presence/boxes, frame motion energy
 - `pipeline/baseline.py` — per-subject numeric feature baselines, persistence, deviation scores
+- `pipeline/fusion.py` — temporal multimodal fusion into HUD presentation events
 - `requirements-audio.txt` — optional local audio dependencies
 - `requirements-video.txt` — optional OpenCV camera dependencies
 - `web/index.html` — simulated glasses HUD
@@ -62,6 +63,9 @@ The video pipeline emits observable camera measurements only. It does not perfor
 
 ### Baselines
 `BaselineStore` learns numeric observable-feature distributions per opaque subject/session ID. By default a feature needs 5 prior samples before a deviation z-score is emitted. Baseline deviation is statistical distance only; it is not an emotion, deception, intent, identity, or diagnosis label.
+
+### Multimodal fusion
+`fuse_events()` groups observations into configurable time windows and produces HUD presentation events. Baseline deviations drive the strongest scores; cross-channel convergence increases confidence. The fusion output is restricted to `NORMAL`, `SIGNALS CHANGED`, `BASELINE SHIFT`, and `INSUFFICIENT EVIDENCE`.
 
 ### Tests
 ```bash
