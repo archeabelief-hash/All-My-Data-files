@@ -67,6 +67,18 @@ The video pipeline emits observable camera measurements only. It does not perfor
 ### Multimodal fusion
 `fuse_events()` groups observations into configurable time windows and produces HUD presentation events. Baseline deviations drive the strongest scores; cross-channel convergence increases confidence. The fusion output is restricted to `NORMAL`, `SIGNALS CHANGED`, `BASELINE SHIFT`, and `INSUFFICIENT EVIDENCE`.
 
+### Integrated API runtime
+The FastAPI backend now orchestrates observations, baseline comparison/learning, fusion, and the live HUD.
+
+- `POST /api/audio` — ingest vocal/language observation events
+- `POST /api/video` — ingest visual/motion observation events
+- `GET /api/baseline/{subject_id}` — inspect numeric baseline statistics
+- `DELETE /api/baseline/{subject_id}` — delete a subject/session baseline
+- `GET /api/hud/stream` — Server-Sent Events stream of fused HUD states
+- `POST /api/fuse` — retained compatibility endpoint
+
+The browser HUD connects to the SSE stream automatically. Incoming batches are compared against the existing baseline before optional learning, preventing a sample from diluting its own deviation score.
+
 ### Tests
 ```bash
 pytest -q
